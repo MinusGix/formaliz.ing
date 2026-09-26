@@ -70,6 +70,8 @@ One-time setup:
 2. DNS for `formaliz.ing`: apex `A` records to `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (and `AAAA` to `2606:50c0:8000::153` … `8003::153`); optionally `www` `CNAME` → `minusgix.github.io`.
 3. Verify the domain under GitHub account settings → Pages, then tick "Enforce HTTPS".
 
+DNS is on Cloudflare. Keep these records **DNS only** (grey cloud), so that GitHub can issue and renew its Let's Encrypt certificate.
+
 ### heather.formaliz.ing
 
 GitHub Pages serves one custom domain per repository, so Heather's site is pushed to a second repository:
