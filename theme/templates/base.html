@@ -31,17 +31,21 @@ window.MathJax = {
 </head>
 <body class="tex2jax_ignore {{ site.body_class }}">
 <div class="sheet">
-<header class="masthead">
+<header class="masthead {% block masthead_class %}{% endblock %}">
   <div class="rule-heavy"></div>
   <div class="masthead-meta">
     <span>Vol. {{ volume|roman }} · No. {{ entry_count }}</span>
     <span>{{ build_date }}</span>
   </div>
+  <div class="masthead-body">
+  <div class="masthead-name">
   <p class="masthead-title"><a href="/">{{ site.title }}</a></p>
   {% if site.subtitle %}<p class="masthead-subtitle">{{ site.subtitle }}</p>{% endif %}
+  </div>
   <nav class="masthead-nav">
     {% for link in site.nav %}<a href="{{ link.url }}">{{ link.title }}</a>{% if not loop.last %}<span class="sep" aria-hidden="true">✦</span>{% endif %}{% endfor %}
   </nav>
+  </div>
   <div class="rule-heavy flip"></div>
 </header>
 <main>

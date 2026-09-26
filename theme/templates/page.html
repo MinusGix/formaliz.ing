@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block masthead_class %}compact{% endblock %}
 {% block title %}{{ page.title }} · {{ site.title }}{% endblock %}
 {% block description %}{{ page.description or page.summary }}{% endblock %}
 {% block path %}{{ page.url }}{% endblock %}

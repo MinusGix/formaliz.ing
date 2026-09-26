@@ -28,6 +28,7 @@ theme/templates/            minijinja templates, shared by all sites
 theme/static/               served at /theme/
 theme/syntaxes/             extra .sublime-syntax files for code highlighting
 src/                        the Press
+issues/                     Press feature ideas and bugs (not content)
 ```
 
 ## Writing
