@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ site.title }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ site.description }}{% endblock %}">
+<link rel="canonical" href="{{ site.base_url }}{% block path %}/{% endblock %}">
+<link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="/feed.xml">
+<link rel="icon" href="/theme/favicon.svg" type="image/svg+xml">
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="/theme/style.css?v={{ build_id }}">
+{% if has_math %}
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    tags: "ams",
+    macros: {{ site.mathjax_macros|tojson }}
+  },
+  options: { ignoreHtmlClass: "tex2jax_ignore", processHtmlClass: "tex2jax_process" }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+{% endif %}
+{% block head %}{% endblock %}
+</head>
+<body class="tex2jax_ignore {{ site.body_class }}">
+<div class="sheet">
+<header class="masthead">
+  <div class="rule-heavy"></div>
+  <div class="masthead-meta">
+    <span>Vol. {{ volume|roman }} · No. {{ entry_count }}</span>
+    <span>{{ build_date }}</span>
+  </div>
+  <p class="masthead-title"><a href="/">{{ site.title }}</a></p>
+  {% if site.subtitle %}<p class="masthead-subtitle">{{ site.subtitle }}</p>{% endif %}
+  <nav class="masthead-nav">
+    {% for link in site.nav %}<a href="{{ link.url }}">{{ link.title }}</a>{% if not loop.last %}<span class="sep" aria-hidden="true">✦</span>{% endif %}{% endfor %}
+  </nav>
+  <div class="rule-heavy flip"></div>
+</header>
+<main>
+{% block main %}{% endblock %}
+</main>
+<footer class="colophon">
+  <p class="ornament" aria-hidden="true">❧</p>
+  <p>Set in EB Garamond &amp; IM Fell English. Composed on the Press, a small engine of Rust.</p>
+  <p><a href="/feed.xml">Atom feed</a> · <a href="/tags/">Index of subjects</a> · <button type="button" class="theme-toggle">Gaslight / Daylight</button></p>
+</footer>
+</div>
+<script>
+document.querySelector(".theme-toggle").addEventListener("click", function () {
+  var root = document.documentElement;
+  var dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  root.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("theme", root.dataset.theme); } catch (e) {}
+});
+</script>
+{% if live_reload %}
+<script>
+(function () {
+  var seen = null;
+  setInterval(function () {
+    fetch("/__livereload").then(function (r) { return r.text(); }).then(function (g) {
+      if (seen === null) seen = g; else if (g !== seen) location.reload();
+    }).catch(function () {});
+  }, 700);
+})();
+</script>
+{% endif %}
+</body>
+</html>

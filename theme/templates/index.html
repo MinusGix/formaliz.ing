@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% from "partials/ledger.html" import ledger %}
+{% block main %}
+{% if page %}<div class="entry-body home-intro">
+{{ page.content|safe }}
+</div>{% endif %}
+<h2 class="rubric">Latest Dispatches</h2>
+{% if recent %}{{ ledger(recent, true) }}{% else %}<p class="empty">The presses are warming. Nothing has yet been set in type.</p>{% endif %}
+{% endblock %}

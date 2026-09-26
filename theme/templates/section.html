@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from "partials/ledger.html" import ledger %}
+{% block title %}{{ section.title }} · {{ site.title }}{% endblock %}
+{% block description %}{{ section.description or site.description }}{% endblock %}
+{% block path %}{{ section.url }}{% endblock %}
+{% block main %}
+<header class="section-head">
+  <h1 class="section-title">{{ section.title }}</h1>
+  {% if section.description %}<p class="section-desc">{{ section.description }}</p>{% endif %}
+</header>
+{% if section.intro %}<div class="entry-body section-intro">
+{{ section.intro|safe }}
+</div>{% endif %}
+{% if pages %}{{ ledger(pages) }}{% else %}<p class="empty">Nothing has yet been set in type.</p>{% endif %}
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% from "partials/ledger.html" import ledger %}
+{% block title %}{{ tag.title }} · {{ site.title }}{% endblock %}
+{% block path %}{{ tag.url }}{% endblock %}
+{% block main %}
+<header class="section-head">
+  <p class="section-kicker"><a href="/tags/">Index of Subjects</a></p>
+  <h1 class="section-title">{{ tag.title }}</h1>
+</header>
+{{ ledger(tag.pages, true) }}
+{% endblock %}

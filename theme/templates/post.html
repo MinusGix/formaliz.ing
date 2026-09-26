@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title }} · {{ site.title }}{% endblock %}
+{% block description %}{{ page.description or page.summary }}{% endblock %}
+{% block path %}{{ page.url }}{% endblock %}
+{% block main %}
+<article class="entry{% if page.dropcap %} dropcap{% endif %}">
+  <header class="entry-head">
+    <a class="plate" href="/{{ page.section }}/"><span>{{ page.kind }}</span><span class="plate-no">№ {{ page.number_padded }}</span></a>
+    {% if page.draft %}<span class="stamp">Draft</span>{% endif %}
+    <h1 class="entry-title">{{ page.title }}</h1>
+    <p class="entry-meta">
+      {% if page.date %}<time datetime="{{ page.date }}">{{ page.date_long }}</time><span class="sep">·</span>{% endif %}
+      {% if page.updated %}revised <time datetime="{{ page.updated }}">{{ page.updated_long }}</time><span class="sep">·</span>{% endif %}
+      {{ page.reading_minutes }} min.
+    </p>
+    {% if page.epistemic %}<p class="epistemic"><span class="label">Epistemic status.</span> {{ page.epistemic }}</p>{% endif %}
+  </header>
+  {% if page.show_toc %}{% include "partials/toc.html" %}{% endif %}
+  <div class="entry-body">
+{{ page.content|safe }}
+  </div>
+  <footer class="entry-foot">
+    {% if page.tags %}<p class="filed">Filed under {% for t in page.tags %}<a href="{{ t.url }}">{{ t.title }}</a>{% if not loop.last %}, {% endif %}{% endfor %}.</p>{% endif %}
+    {% if page.prev or page.next %}
+    <nav class="prevnext">
+      {% if page.prev %}<a class="prev" href="{{ page.prev.url }}"><span class="dir">← Preceding</span>{{ page.prev.title }}</a>{% else %}<span></span>{% endif %}
+      {% if page.next %}<a class="next" href="{{ page.next.url }}"><span class="dir">Following →</span>{{ page.next.title }}</a>{% endif %}
+    </nav>
+    {% endif %}
+  </footer>
+</article>
+{% endblock %}

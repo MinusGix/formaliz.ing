@@ -1,0 +1,64 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --release
+      - run: cargo run --release -- build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/main
+      - uses: actions/upload-artifact@v4
+        with:
+          name: heather
+          path: public/heather
+
+  # formaliz.ing, served from this repository's Pages.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # heather.formaliz.ing: GitHub Pages allows one custom domain per repository, so
+  # this pushes to a second repository's gh-pages branch. Enabled once the repository
+  # variable HEATHER_REPO (e.g. "MinusGix/heather.formaliz.ing") and the secret
+  # HEATHER_DEPLOY_KEY (a write deploy key on that repository) are set.
+  deploy-heather:
+    needs: build
+    if: vars.HEATHER_REPO != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: heather
+          path: heather
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.HEATHER_DEPLOY_KEY }}
+          external_repository: ${{ vars.HEATHER_REPO }}
+          publish_branch: gh-pages
+          publish_dir: heather
+          cname: heather.formaliz.ing

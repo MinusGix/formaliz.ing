@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title }} · {{ site.title }}{% endblock %}
+{% block description %}{{ page.description or page.summary }}{% endblock %}
+{% block path %}{{ page.url }}{% endblock %}
+{% block main %}
+<article class="entry standalone{% if page.dropcap %} dropcap{% endif %}">
+  <header class="entry-head">
+    <h1 class="entry-title">{{ page.title }}</h1>
+  </header>
+  {% if page.show_toc %}{% include "partials/toc.html" %}{% endif %}
+  <div class="entry-body">
+{{ page.content|safe }}
+  </div>
+</article>
+{% endblock %}

@@ -1,0 +1,15 @@
+title = "Heather"
+subtitle = "A Dependently-Typed Programming Language"
+description = "Heather, a dependently-typed programming language."
+base_url = "https://heather.formaliz.ing"
+author = "MinusGix"
+established = 2026
+body_class = "heather"
+
+nav = [
+  { title = "Log", url = "/log/" },
+  { title = "formaliz.ing", url = "https://formaliz.ing/" },
+]
+
+[mathjax_macros]
+Type = "\\mathsf{Type}"

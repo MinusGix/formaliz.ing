@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "main", "runtimeExecutable": "cargo", "runtimeArgs": ["run", "-q", "--", "serve", "--site", "main", "--port", "8000"], "port": 8000 },
+    { "name": "heather", "runtimeExecutable": "cargo", "runtimeArgs": ["run", "-q", "--", "serve", "--site", "heather", "--port", "8001"], "port": 8001 }
+  ]
+}

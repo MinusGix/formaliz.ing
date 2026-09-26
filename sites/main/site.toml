@@ -1,0 +1,24 @@
+title = "formaliz.ing"
+subtitle = "Notes & Thoughts upon Type Theory, Mathematics, Philosophy, and the Art of Decision"
+description = "A personal journal on type theory, mathematics, philosophy, and decision theory."
+base_url = "https://formaliz.ing"
+author = "MinusGix"
+established = 2026
+home_recent = 12
+
+nav = [
+  { title = "Notes", url = "/notes/" },
+  { title = "Thoughts", url = "/thoughts/" },
+  { title = "Things", url = "/things/" },
+  { title = "Heather", url = "https://heather.formaliz.ing/" },
+  { title = "About", url = "/about/" },
+]
+
+# Available in every page's MathJax, e.g. $\N$, $\Type$.
+[mathjax_macros]
+N = "\\mathbb{N}"
+Z = "\\mathbb{Z}"
+Q = "\\mathbb{Q}"
+R = "\\mathbb{R}"
+Type = "\\mathsf{Type}"
+Prop = "\\mathsf{Prop}"

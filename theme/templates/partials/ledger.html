@@ -1,0 +1,16 @@
+{% macro ledger(pages, show_kind=false) %}
+<ol class="ledger">
+{% for p in pages %}
+  <li>
+    <div class="ledger-line">
+      {% if show_kind %}<span class="ledger-no">{{ p.kind }}</span>{% else %}<span class="ledger-no">{{ p.number_padded }}</span>{% endif %}
+      <a class="ledger-title" href="{{ p.url }}">{{ p.title }}</a>
+      {% if p.draft %}<span class="ledger-draft">draft</span>{% endif %}
+      <span class="leader" aria-hidden="true"></span>
+      {% if p.date %}<time datetime="{{ p.date }}">{{ p.date_short }}</time>{% endif %}
+    </div>
+    {% if p.description %}<p class="ledger-desc">{{ p.description }}</p>{% endif %}
+  </li>
+{% endfor %}
+</ol>
+{% endmacro %}
