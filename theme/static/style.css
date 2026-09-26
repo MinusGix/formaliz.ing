@@ -2,6 +2,16 @@
    formaliz.ing: a Victorian journal, printed on an iron press.
    ───────────────────────────────────────────────────────────── */
 
+/* ── Faces (self-hosted; see scripts/fonts.sh and fonts/OFL-*.txt) ── */
+
+@font-face { font-family: "EB Garamond"; src: url("fonts/EBGaramond.woff2") format("woff2"); font-weight: 400 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "EB Garamond"; src: url("fonts/EBGaramond-Italic.woff2") format("woff2"); font-weight: 400 800; font-style: italic; font-display: swap; }
+@font-face { font-family: "IM Fell English"; src: url("fonts/IMFellEnglish.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "IM Fell English"; src: url("fonts/IMFellEnglish-Italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "IM Fell English SC"; src: url("fonts/IMFellEnglishSC.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono.woff2") format("woff2"); font-weight: 100 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-Italic.woff2") format("woff2"); font-weight: 100 800; font-style: italic; font-display: swap; }
+
 :root {
   --paper: #f2ead8;
   --paper-deep: #e7dbc0;
@@ -142,9 +152,10 @@ a:hover { color: var(--accent); text-decoration-color: var(--accent); }
   gap: 1rem;
   padding: 0.3rem 0.1rem;
   border-bottom: 1px solid var(--rule);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  font-variant-caps: all-small-caps;
+  font-variant-numeric: lining-nums;
   color: var(--ink-soft);
 }
 
@@ -182,7 +193,7 @@ a:hover { color: var(--accent); text-decoration-color: var(--accent); }
   font-size: 1.05rem;
 }
 .masthead-nav a { text-decoration: none; }
-.masthead-nav .sep { color: var(--brass); font-size: 0.6rem; }
+.masthead-nav .sep { color: var(--brass); font-weight: 700; }
 
 /* ── Entry heads ───────────────────────────────────────────── */
 
@@ -357,9 +368,13 @@ hr {
   line-height: 1;
 }
 hr::before {
-  content: "⁂";
+  content: "*\A*\2009*";
+  white-space: pre;
+  display: inline-block;
+  line-height: 0.5;
+  padding-top: 0.25em;
   color: var(--brass);
-  font-size: 1.3rem;
+  font-size: 2.1rem;
 }
 
 img, video { max-width: 100%; height: auto; }

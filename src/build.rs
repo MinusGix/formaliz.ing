@@ -87,6 +87,12 @@ pub fn build(root: &Path, site: &str, out: &Path, opts: &BuildOptions) -> Result
     }
     fs::create_dir_all(out)?;
     copy_tree(&theme.join("static"), &out.join("theme"))?;
+    // Third-party assets fetched by scripts/ (MathJax), served beside the theme.
+    let vendor = theme.join("vendor");
+    if !vendor.join("mathjax").exists() {
+        eprintln!("warning: theme/vendor/mathjax is missing; run scripts/mathjax.sh");
+    }
+    copy_tree(&vendor, &out.join("theme"))?;
     copy_tree(&site_dir.join("static"), out)?;
     for (src, rel) in &content.passthrough {
         copy_tree(src, &out.join(rel))?;

@@ -5,6 +5,7 @@ Source for [formaliz.ing](https://formaliz.ing) and [heather.formaliz.ing](https
 ## Usage
 
 ```sh
+scripts/mathjax.sh                    # once after cloning: fetch MathJax into theme/vendor/ (gitignored)
 cargo run -- serve                    # main site at http://localhost:8000, drafts shown, live reload
 cargo run -- serve --site heather --port 8001
 cargo run -- new main notes "On Univalence"   # new draft in sites/main/content/notes/
@@ -26,7 +27,10 @@ sites/<site>/content/
   anything-else/            copied through untouched
 theme/templates/            minijinja templates, shared by all sites
 theme/static/               served at /theme/
+theme/static/fonts/         self-hosted, subsetted fonts (regenerate with scripts/fonts.sh)
+theme/vendor/               fetched third-party assets (MathJax); gitignored
 theme/syntaxes/             extra .sublime-syntax files for code highlighting
+scripts/                    asset fetching: fonts.sh, mathjax.sh
 src/                        the Press
 issues/                     Press feature ideas and bugs (not content)
 ```
@@ -52,7 +56,7 @@ dropcap = false             # default: on for section entries
 Markdown is CommonMark with GitHub tables, strikethrough, task lists, footnotes, definition lists, smart punctuation, and `{#id .class}` heading attributes.
 **A single newline is a line break.** A blank line starts a new paragraph.
 
-Mathematics is set by MathJax, loaded only on pages that use it: `$inline$`, `$$display$$`, or a ```` ```math ```` block (which also takes `equation`/`align` environments and numbering). Per-site macros live in `site.toml` under `[mathjax_macros]`.
+Mathematics is set by MathJax 4 (self-hosted), loaded only on pages that use it: `$inline$`, `$$display$$`, or a ```` ```math ```` block (which also takes `equation`/`align` environments and numbering). Per-site macros live in `site.toml` under `[mathjax_macros]`.
 
 Footnotes may be defined anywhere; they are collected at the foot of the entry.
 
