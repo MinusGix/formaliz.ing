@@ -50,7 +50,14 @@ plus (S m) n = S (plus m n)
 
 ### A Subsection
 
-Footnotes may be written anywhere[^where], and are gathered at the foot of the entry.[^second]
+Footnotes may be written anywhere[^where], and are gathered at the foot of the entry.[^second] Where the page is wide enough, they are set in the margin beside the line that cites them;[^margin] where it is not, hovering or tapping the numeral shows the note in place. Notes cited close together stack rather than collide.[^stack]
+
+[^margin]: Like this one. A sidenote may run to several paragraphs, and carry mathematics: for $f : A \to B$, the fibre over $b$ is
+$$\mathsf{fib}_f(b) \;:\equiv\; \sum_{a : A} f(a) = b.$$
+
+    A second paragraph, indented under the note, belongs to it too.
+
+[^stack]: This note was cited in the same paragraph as the one above, so it is pushed below it.
 
 [^where]: Including right here, mid-document.
 

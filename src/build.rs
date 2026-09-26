@@ -48,6 +48,7 @@ struct PageView {
     toc: Vec<TocEntry>,
     show_toc: bool,
     has_math: bool,
+    has_footnotes: bool,
     reading_minutes: usize,
     draft: bool,
     dropcap: bool,
@@ -127,7 +128,7 @@ pub fn build(root: &Path, site: &str, out: &Path, opts: &BuildOptions) -> Result
             })
             .collect();
         for (page, v) in section.pages.iter().zip(&views) {
-            let html = render(&env, "post.html", context! { page => v, has_math => v.has_math })?;
+            let html = render(&env, "post.html", context! { page => v, has_math => v.has_math, has_footnotes => v.has_footnotes })?;
             write_page(out, &v.url, &html)?;
             copy_assets(out, page)?;
         }
@@ -152,7 +153,7 @@ pub fn build(root: &Path, site: &str, out: &Path, opts: &BuildOptions) -> Result
     // Standalone pages.
     for page in &content.pages {
         let v = view(page, None, None, None, today);
-        let html = render(&env, "page.html", context! { page => v, has_math => v.has_math })?;
+        let html = render(&env, "page.html", context! { page => v, has_math => v.has_math, has_footnotes => v.has_footnotes })?;
         write_page(out, &v.url, &html)?;
     }
 
@@ -245,6 +246,7 @@ fn view(
         toc: r.toc.clone(),
         show_toc: page.fm.toc.unwrap_or(r.toc.len() >= 3),
         has_math: r.has_math,
+        has_footnotes: r.has_footnotes,
         reading_minutes: r.word_count.div_ceil(WORDS_PER_MINUTE).max(1),
         draft: page.fm.draft,
         dropcap: page.fm.dropcap.unwrap_or(section.is_some()),

@@ -58,7 +58,7 @@ Markdown is CommonMark with GitHub tables, strikethrough, task lists, footnotes,
 
 Mathematics is set by MathJax 4 (self-hosted), loaded only on pages that use it: `$inline$`, `$$display$$`, or a ```` ```math ```` block (which also takes `equation`/`align` environments and numbering). Per-site macros live in `site.toml` under `[mathjax_macros]`.
 
-Footnotes may be defined anywhere; they are collected at the foot of the entry.
+Footnotes may be defined anywhere and are numbered in order of citation. They are collected at the foot of the entry; on wide screens they are set as sidenotes in the margin, and on narrow ones a reference shows its note in a popover when hovered or tapped.
 
 ## Deployment
 

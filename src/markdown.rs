@@ -1,7 +1,7 @@
 use anyhow::Result;
 use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag, TagEnd, html};
 use serde::Serialize;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 use syntect::html::{ClassStyle, ClassedHTMLGenerator};
 use syntect::parsing::SyntaxSet;
@@ -22,6 +22,7 @@ pub struct Rendered {
     pub html: String,
     pub toc: Vec<TocEntry>,
     pub has_math: bool,
+    pub has_footnotes: bool,
     /// Plain-text opening of the first paragraph.
     pub summary: String,
     pub word_count: usize,
@@ -56,8 +57,18 @@ impl Markdown {
         let (word_count, mut has_math, summary) = stats(&events);
 
         let mut out: Vec<Event> = Vec::with_capacity(events.len());
-        let mut footnotes: Vec<Event> = Vec::new();
-        let mut in_footnote = false;
+        // Footnotes are numbered by first reference, whatever their names or definition order.
+        let mut numbers: HashMap<String, usize> = HashMap::new();
+        for e in &events {
+            if let Event::FootnoteReference(name) = e {
+                let next = numbers.len() + 1;
+                numbers.entry(name.to_string()).or_insert(next);
+            }
+        }
+        let mut ref_counts: HashMap<usize, usize> = HashMap::new();
+        // (number, body events) per definition; `current` is the one being collected.
+        let mut footnotes: Vec<(usize, Vec<Event>)> = Vec::new();
+        let mut current: Option<usize> = None;
         let mut toc = Vec::new();
         let mut ids = HashSet::new();
 
@@ -83,7 +94,7 @@ impl Markdown {
                         let joined: Vec<&str> = classes.iter().map(|c| c.as_ref()).collect();
                         format!(r#" class="{}""#, escape(&joined.join(" ")))
                     };
-                    if !in_footnote && (2..=4).contains(&level) {
+                    if current.is_none() && (2..=4).contains(&level) {
                         toc.push(TocEntry {
                             level,
                             id: id.clone(),
@@ -136,35 +147,69 @@ impl Markdown {
                 {
                     Event::SoftBreak
                 }
-                Event::Start(Tag::FootnoteDefinition(_)) => {
-                    in_footnote = true;
-                    footnotes.push(events[i].clone());
+                Event::FootnoteReference(name) => {
+                    let next = numbers.len() + 1;
+                    let n = *numbers.entry(name.to_string()).or_insert(next);
+                    let count = ref_counts.entry(n).or_insert(0);
+                    *count += 1;
+                    let id = if *count == 1 {
+                        format!("fnref-{n}")
+                    } else {
+                        format!("fnref-{n}-{count}")
+                    };
+                    Event::InlineHtml(
+                        format!(r##"<sup class="footnote-ref" id="{id}"><a href="#fn-{n}">{n}</a></sup>"##)
+                            .into(),
+                    )
+                }
+                Event::Start(Tag::FootnoteDefinition(name)) => {
+                    let next = numbers.len() + 1;
+                    let n = *numbers.entry(name.to_string()).or_insert(next);
+                    footnotes.push((n, Vec::new()));
+                    current = Some(footnotes.len() - 1);
                     i += 1;
                     continue;
                 }
                 Event::End(TagEnd::FootnoteDefinition) => {
-                    in_footnote = false;
-                    footnotes.push(events[i].clone());
+                    current = None;
                     i += 1;
                     continue;
                 }
                 other => inline(other.clone()),
             };
-            if in_footnote {
-                footnotes.push(emitted);
-            } else {
-                out.push(emitted);
+            match current {
+                Some(c) => footnotes[c].1.push(emitted),
+                None => out.push(emitted),
             }
             i += 1;
         }
 
         // Gather footnote definitions at the foot of the entry, wherever they were written.
-        if !footnotes.is_empty() {
+        // theme/static/footnotes.js lifts these into the margin when there is room.
+        let has_footnotes = !footnotes.is_empty();
+        if has_footnotes {
+            footnotes.sort_by_key(|(n, _)| *n);
             out.push(Event::Html(
-                "<section class=\"footnotes\" role=\"doc-endnotes\">\n".into(),
+                "<section class=\"footnotes\" role=\"doc-endnotes\">\n<ol class=\"footnote-list\">\n".into(),
             ));
-            out.extend(footnotes);
-            out.push(Event::Html("</section>\n".into()));
+            for (n, mut body) in footnotes {
+                let backref = Event::InlineHtml(
+                    format!(r##" <a class="footnote-backref" href="#fnref-{n}" aria-label="Back to text">↩</a>"##)
+                        .into(),
+                );
+                // Keep the back-link on the note's last line when it ends in a paragraph.
+                match body.last() {
+                    Some(Event::End(TagEnd::Paragraph)) => body.insert(body.len() - 1, backref),
+                    _ => body.push(backref),
+                }
+                out.push(Event::Html(
+                    format!(r#"<li class="footnote" id="fn-{n}"><span class="footnote-label">{n}</span><div class="footnote-body">"#)
+                        .into(),
+                ));
+                out.extend(body);
+                out.push(Event::Html("</div></li>\n".into()));
+            }
+            out.push(Event::Html("</ol>\n</section>\n".into()));
         }
 
         let mut html_out = String::new();
@@ -173,6 +218,7 @@ impl Markdown {
             html: html_out,
             toc,
             has_math,
+            has_footnotes,
             summary,
             word_count,
         }
@@ -380,5 +426,21 @@ mod tests {
         let b = r.html.find("<p>B.</p>").unwrap();
         let notes = r.html.find("class=\"footnotes\"").unwrap();
         assert!(notes > b);
+    }
+
+    #[test]
+    fn footnotes_numbered_by_reference() {
+        let r = md().render("[^b]: Second.\n\n[^a]: First.\n\nX[^a] y[^b] z[^a].");
+        assert!(r.has_footnotes);
+        for needle in [
+            r##"<sup class="footnote-ref" id="fnref-1"><a href="#fn-1">1</a></sup>"##,
+            r##"<sup class="footnote-ref" id="fnref-2"><a href="#fn-2">2</a></sup>"##,
+            r##"id="fnref-1-2""##,
+            r##"<li class="footnote" id="fn-1">"##,
+            r##"First. <a class="footnote-backref" href="#fnref-1""##,
+        ] {
+            assert!(r.html.contains(needle), "missing {needle}\n{}", r.html);
+        }
+        assert!(r.html.find(r#"id="fn-1""#) < r.html.find(r#"id="fn-2""#));
     }
 }

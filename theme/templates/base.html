@@ -26,10 +26,11 @@ window.MathJax = {
 </script>
 <script defer src="/theme/mathjax/tex-chtml.js"></script>
 {% endif %}
+{% if has_footnotes %}<script defer src="/theme/footnotes.js?v={{ build_id }}"></script>{% endif %}
 {% block head %}{% endblock %}
 </head>
 <body class="tex2jax_ignore {{ site.body_class }}">
-<div class="sheet">
+<div class="sheet{% if has_footnotes %} with-margin{% endif %}">
 <header class="masthead {% block masthead_class %}{% endblock %}">
   <div class="rule-heavy"></div>
   <div class="masthead-meta">
