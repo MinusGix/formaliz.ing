@@ -13,3 +13,5 @@ Finished issues keep their file, with status `done` and a note on what was actua
 | 005 | [Heather syntax highlighting via tree-sitter](005-heather-highlighting.md) | open |
 | 006 | [Footnote back-references](006-footnote-backrefs.md) | done |
 | 007 | [Admonitions](007-admonitions.md) | open |
+| 008 | [Build-time link checking](008-link-checking.md) | open |
+| 009 | [Print stylesheet](009-print-stylesheet.md) | open |
